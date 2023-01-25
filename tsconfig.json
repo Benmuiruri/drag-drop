@@ -62,12 +62,12 @@
     /* Experimental Options */
     // "experimentalDecorators": true,        /* Enables experimental support for ES7 decorators. */
    ,
-  "experimentalDecorators": true
-},
-"include": [
-  // Include your source file as well
-  "src"
-],
+    "experimentalDecorators": true
+  },
+  "include": [
+    // Include your source file as well
+    "src"
+  ],
   "exclude": [
     "node_modules" // would be the default
   ]
