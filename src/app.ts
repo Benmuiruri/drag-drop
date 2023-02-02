@@ -1,8 +1,8 @@
 // Project type 
 
 enum ProjectStatus {
-  Active, 
-  Finished
+  Active = "active",
+  Finished = "finished"
 }
 
 class Project {
@@ -12,7 +12,7 @@ class Project {
     public description: string,
     public people: number,
     public status: ProjectStatus
-  ) {}
+  ) { }
 }
 
 // Listener type
@@ -24,7 +24,7 @@ class ProjectState {
   private listeners: Listener[] = [];
   private projects: Project[] = [];
   private static instance: ProjectState;
-  
+
   private constructor() { }
 
   static getInstance() {
@@ -202,7 +202,7 @@ class ProjectList {
   element: HTMLElement;
   assignedProjects: Project[];
 
-  constructor(private type: 'active' | 'finished') {
+  constructor(private type: ProjectStatus.Active | ProjectStatus.Finished ) {
     this.templateElement = document.getElementById('project-list') as HTMLTemplateElement;
 
     this.hostElement = document.getElementById('app') as HTMLDivElement;
@@ -215,7 +215,13 @@ class ProjectList {
     this.element.id = `${this.type}-projects`;
 
     projectState.addListener((projects: Project[]) => {
-      this.assignedProjects = projects;
+      const allProjects = projects.filter(project => {
+        if (this.type === ProjectStatus.Active) {
+          return project.status === ProjectStatus.Active;
+        }
+        return project.status === ProjectStatus.Finished;
+      });
+      this.assignedProjects = allProjects;
       this.renderProjects();
     });
     this.attach();
@@ -244,5 +250,5 @@ class ProjectList {
 }
 
 const projectInput = new ProjectInput();
-const activeProjectList = new ProjectList('active');
-const finishedProjectList = new ProjectList('finished');
+const activeProjectList = new ProjectList(ProjectStatus.Active)
+const finishedProjectList = new ProjectList(ProjectStatus.Finished)
