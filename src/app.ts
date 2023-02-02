@@ -16,16 +16,26 @@ class Project {
 }
 
 // Listener type
-type Listener = (projects: Project[]) => void;
+type Listener<T> = (items: T[]) => void;
+
+// State Base Class
+class State<T> {
+  protected listeners: Listener<T>[] = [];
+
+  addListener(listenerFunc: Listener<T>) {
+    this.listeners.push(listenerFunc);
+  }
+}
 
 // Project State Management
-
-class ProjectState {
-  private listeners: Listener[] = [];
+class ProjectState extends State<Project> {
+  
   private projects: Project[] = [];
   private static instance: ProjectState;
 
-  private constructor() { }
+  private constructor() {
+    super();
+   }
 
   static getInstance() {
     if (this.instance) {
@@ -33,12 +43,6 @@ class ProjectState {
     }
     this.instance = new ProjectState();
     return this.instance;
-  }
-
-
-  // An event listener that will be called whenever a new project is added
-  addListener(listenerFunc: Listener) {
-    this.listeners.push(listenerFunc);
   }
 
   addProject(title: string, description: string, numOfPeople: number) {
