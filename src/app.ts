@@ -1,5 +1,16 @@
-// Project type
+// Drag and Drop Interfaces
+interface Draggable {
+  startDragHandler(event: DragEvent): void;
+  endDragHandler(event: DragEvent): void;
+}
 
+interface DragTarget {
+  dragOverHandler(event: DragEvent): void;
+  dropHandler(event: DragEvent): void;
+  dragLeaveHandler(event: DragEvent): void;
+}
+
+// Project type
 enum ProjectStatus {
   Active = "active",
   Finished = "finished"
@@ -216,11 +227,11 @@ class ProjectInput extends Component<HTMLDivElement, HTMLFormElement>  {
 
 // ProjectItem class
 
-class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> {
+class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> implements Draggable {
   private project: Project;
 
-  get persons(){
-    if(this.project.people === 1){
+  get persons() {
+    if (this.project.people === 1) {
       return '1 person';
     } else {
       return `${this.project.people} people`;
@@ -235,7 +246,18 @@ class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> {
     this.renderContent();
   }
 
-  configure() {}
+  @Autobind
+  startDragHandler(event: DragEvent): void {
+    console.log(event);
+   }
+  endDragHandler(_: DragEvent): void {
+    console.log('DragEnd');
+  }
+
+  configure() {
+    this.element.addEventListener('dragstart', this.startDragHandler);
+    this.element.addEventListener('dragend', this.endDragHandler);
+  }
 
   renderContent() {
     this.element.querySelector('h2')!.textContent = this.project.title;
@@ -281,7 +303,7 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement> {
     const listElement = document.getElementById(`${this.type}-projects-list`) as HTMLUListElement;
     listElement.innerHTML = '';
     for (const projectItem of this.assignedProjects) {
-       new ProjectItem(this.element.querySelector('ul')!.id, projectItem)
+      new ProjectItem(this.element.querySelector('ul')!.id, projectItem)
     }
   }
 }
